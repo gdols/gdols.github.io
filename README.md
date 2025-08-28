@@ -6,4 +6,4 @@ Portfolio en español y **blog** con entradas en **ES** (por defecto) y algunas 
 - **Producción:** https://gdols.dev
 - **Stack:** Astro, Content Collections, Markdown/MDX (opcional), GitHub Pages
 
----S
+---
