@@ -1,0 +1,23 @@
+﻿---
+import { getCollection } from 'astro:content';
+
+// 1) Le decimos a Astro qué páginas generar (todas las del blog ES)
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', (p) => p.slug.startsWith('es/') && !p.data.draft);
+
+  return posts.map((p) => ({
+    params: { slug: p.slug.split('/')[1] }, // 'es/mi-slug' -> 'mi-slug'
+    props: { post: p },                      // pasamos el post a la página
+  }));
+}
+
+// 2) Recibimos el post que viene desde getStaticPaths
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<article style="max-width: 800px; margin: 0 auto;">
+  <h1>{post.data.title}</h1>
+  <p><small>{post.data.date}</small></p>
+  <Content />
+</article>
