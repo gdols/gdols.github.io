@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { formatDate } from "../../utils";
+
+const posts = (await getCollection("blog", (p) => !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Blog — gdols.dev" description="Notas sobre .NET, Blazor, SQL y lo que vaya cayendo.">
+  <h1>Blog</h1>
+
+  {posts.length === 0 ? (
+    <p class="muted">Todavía no he escrito nada. Todo llegará.</p>
+  ) : (
+    <ul class="list">
+      {posts.map((p) => (
+        <li>
+          <div class="row">
+            <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+            <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+          </div>
+          {p.data.summary && <p>{p.data.summary}</p>}
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>

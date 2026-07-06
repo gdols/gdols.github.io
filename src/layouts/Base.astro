@@ -1,0 +1,48 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Web personal de Guille. Notas y proyectos sobre .NET, Blazor y SQL." } = Astro.props;
+const path = Astro.url.pathname;
+const current = (prefix: string) =>
+  path.startsWith(prefix) ? "page" : undefined;
+---
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="alternate" type="application/rss+xml" title="gdols.dev" href="/rss.xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <a class="brand" href="/">gdols.dev</a>
+        <nav>
+          <a href="/blog/" aria-current={current("/blog")}>Blog</a>
+          <a href="/proyectos/" aria-current={current("/proyectos")}>Proyectos</a>
+        </nav>
+      </header>
+      <main>
+        <slot />
+      </main>
+      <footer class="site">
+        <span>© {new Date().getFullYear()} Guille</span>
+        <span>
+          <a href="https://github.com/gdols">GitHub</a> · <a href="/rss.xml">RSS</a>
+        </span>
+      </footer>
+    </div>
+  </body>
+</html>
