@@ -6,7 +6,7 @@ import { formatDate } from "../../utils";
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
-<Base title="Blog — gdols.dev" description="Notas sobre .NET, Blazor, SQL y lo que vaya cayendo.">
+<Base title="Blog" description="Notas sobre .NET, Blazor, SQL y lo que vaya cayendo.">
   <h1>Blog</h1>
 
   {posts.length === 0 ? (

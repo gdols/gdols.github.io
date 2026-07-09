@@ -6,8 +6,33 @@ import { formatDate } from "../utils";
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "gdols.dev",
+      url: "https://gdols.dev/",
+      inLanguage: "es",
+    },
+    {
+      "@type": "Person",
+      name: "Guille Dols",
+      url: "https://gdols.dev/",
+      email: "mailto:guille@gdols.dev",
+      jobTitle: "Full stack developer",
+      knowsAbout: [".NET", "Blazor", "SQL Server", "Azure", "Data Science"],
+      sameAs: [
+        "https://github.com/gdols",
+        "https://www.linkedin.com/in/guillermodols/",
+      ],
+    },
+  ],
+});
 ---
-<Base title="Guille — gdols.dev">
+<Base>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
   <h1>Hola, soy Guille</h1>
   <p>
     Programo, sobre todo con .NET, Blazor y SQL. Esta web es donde voy dejando

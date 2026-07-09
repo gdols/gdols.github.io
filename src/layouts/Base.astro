@@ -2,7 +2,7 @@
 import "../styles/global.css";
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   type?: "website" | "article";
   date?: Date;
@@ -14,6 +14,7 @@ const {
   type = "website",
   date,
 } = Astro.props;
+const fullTitle = title ? `${title} · gdols.dev` : "gdols.dev";
 const path = Astro.url.pathname;
 const url = new URL(path, Astro.site);
 const current = (prefix: string) =>
@@ -23,13 +24,14 @@ const current = (prefix: string) =>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Guille Dols" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={url} />
     <link rel="alternate" type="application/rss+xml" title="gdols.dev" href="/rss.xml" />
     <meta property="og:site_name" content="gdols.dev" />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={url} />
