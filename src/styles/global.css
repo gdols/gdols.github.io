@@ -1,27 +1,23 @@
 :root {
-  --bg: #ffffff;
-  --text: #1a1a1a;
-  --muted: #6b6b6b;
-  --border: #e5e5e5;
-  --accent: #0f62fe;
+  color-scheme: light dark;
+  --bg: light-dark(#ffffff, #121212);
+  --text: light-dark(#1a1a1a, #e8e8e8);
+  --muted: light-dark(#6b6b6b, #9a9a9a);
+  --border: light-dark(#e5e5e5, #2a2a2a);
+  --accent: light-dark(#0f62fe, #6ea8ff);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121212;
-    --text: #e8e8e8;
-    --muted: #9a9a9a;
-    --border: #2a2a2a;
-    --accent: #6ea8ff;
-  }
+/* Preferencia manual del selector de tema; sin atributo manda el sistema */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 * {
   box-sizing: border-box;
-}
-
-html {
-  color-scheme: light dark;
 }
 
 body {
@@ -57,6 +53,7 @@ header.site .brand {
 
 header.site nav {
   display: flex;
+  align-items: center;
   gap: 1.25rem;
 }
 
@@ -68,6 +65,43 @@ header.site nav a {
 header.site nav a:hover,
 header.site nav a[aria-current="page"] {
   color: var(--text);
+}
+
+/* Selector de tema */
+.theme-toggle {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--muted);
+  display: inline-flex;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+}
+
+.theme-toggle .sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .sun {
+  display: inline;
+}
+
+:root[data-theme="dark"] .theme-toggle .moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .sun {
+    display: inline;
+  }
+
+  :root:not([data-theme="light"]) .theme-toggle .moon {
+    display: none;
+  }
 }
 
 main {
@@ -166,8 +200,31 @@ ul.list p {
 article :is(pre) {
   padding: 1rem;
   border-radius: 6px;
+  border: 1px solid var(--border);
   overflow-x: auto;
   font-size: 0.875rem;
+}
+
+/* Shiki genera los dos temas (claro y oscuro); cuando el tema oscuro
+   está activo (manual o por sistema) se aplican las variables --shiki-dark. */
+:root[data-theme="dark"] .astro-code,
+:root[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .astro-code,
+  :root:not([data-theme="light"]) .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
 }
 
 article code {
