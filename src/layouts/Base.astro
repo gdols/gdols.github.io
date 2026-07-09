@@ -50,7 +50,16 @@ const current = (prefix: string) =>
   <body>
     <div class="wrap">
       <header class="site">
-        <a class="brand" href="/">gdols.dev</a>
+        <a class="brand" href="/">
+          <svg viewBox="0 0 96 96" width="20" height="20" aria-hidden="true">
+            <g fill="none" stroke-width="12" stroke-linecap="round" transform="translate(-4,-6)">
+              <circle cx="40" cy="44" r="20" stroke="currentColor"/>
+              <path d="M60 24 L60 64 Q60 84 40 84" stroke="currentColor"/>
+              <path d="M70 84 L84 84" stroke="var(--accent)"/>
+            </g>
+          </svg>
+          gdols.dev
+        </a>
         <nav>
           <a href="/blog/" aria-current={current("/blog")}>Blog</a>
           <a href="/proyectos/" aria-current={current("/proyectos")}>Proyectos</a>

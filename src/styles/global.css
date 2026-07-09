@@ -49,6 +49,14 @@ header.site .brand {
   font-weight: 650;
   text-decoration: none;
   color: var(--text);
+  white-space: nowrap;
+}
+
+/* Alineado por línea base: la base de la g del logo (unidad 64 de 96)
+   cae sobre la línea base del texto, y su descendente baja como la del texto */
+header.site .brand svg {
+  vertical-align: -0.39em;
+  margin-right: 0.45rem;
 }
 
 header.site nav {
