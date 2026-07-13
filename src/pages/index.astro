@@ -5,11 +5,14 @@ import { formatDate } from "../utils";
 
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 5);
+  .slice(0, 1);
 
 const proyectos = (await getCollection("proyectos"))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
+  .sort((a, b) => a.data.order - b.data.order);
+
+const latestPost = posts[0];
+const mdpipe = proyectos.find((p) => p.id === "mdpipe");
+const apiverd = proyectos.find((p) => p.id === "apiverd");
 
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -37,55 +40,52 @@ const jsonLd = JSON.stringify({
 ---
 <Base>
   <script type="application/ld+json" is:inline set:html={jsonLd} />
-  <div class="home-intro">
-    <h1>Hola, soy Guille</h1>
-    <p class="lead">
-      Desarrollador full stack, principalmente con .NET, Blazor y SQL Server.
-      También trabajo con Azure y estudio el Grado de Data Science.
-    </p>
-    <p>
-      Esta web es donde voy dejando mis <a href="/proyectos/">proyectos</a> y
-      <a href="/blog/">notas</a> de cosas que me han costado resolver o que no
-      quiero volver a buscar. Si a alguien más le sirven, mejor.
-    </p>
+  <div class="home">
+    <div class="home-intro">
+      <h1>Hola, soy Guille</h1>
+      <p class="lead">
+        Desarrollador full stack, principalmente con .NET, Blazor y SQL Server.
+        También trabajo con Azure y estudio el Grado de Data Science.
+      </p>
+      <p>
+        Esta web es donde voy dejando proyectos y notas de cosas que me ha
+        costado resolver o que no quiero volver a buscar. Si a alguien más le
+        sirven, mejor.
+      </p>
+    </div>
+
+    {mdpipe && (
+      <section class="home-current" aria-labelledby="current-title">
+        <p class="home-label">Ahora mismo</p>
+        <h2 id="current-title">
+          <a href={mdpipe.data.repo}>{mdpipe.data.title}</a>
+        </h2>
+        <p>{mdpipe.data.description}</p>
+        <p class="home-links">
+          <a href="https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe">Descargar</a>
+          <a href={mdpipe.data.repo}>Ver el código</a>
+          <a href="/proyectos/">Más proyectos</a>
+        </p>
+
+        {latestPost && (
+          <div class="home-note">
+            <p class="home-label">
+              Última nota · <time datetime={latestPost.data.date.toISOString()}>{formatDate(latestPost.data.date)}</time>
+            </p>
+            <h3>
+              <a href={`/blog/${latestPost.id}/`}>{latestPost.data.title}</a>
+            </h3>
+            {latestPost.data.summary && <p>{latestPost.data.summary}</p>}
+          </div>
+        )}
+      </section>
+    )}
+
+    {apiverd && (
+      <p class="home-more">
+        También trabajo en <a href={apiverd.data.demo}>Apiverd</a>, donde pruebo
+        aplicaciones Android, servicios API y productos pequeños.
+      </p>
+    )}
   </div>
-
-  {proyectos.length > 0 && (
-    <section class="home-section" aria-labelledby="proyectos-title">
-      <h2 id="proyectos-title">Proyectos</h2>
-      <ul class="list">
-        {proyectos.map((proyecto) => (
-          <li>
-            <div class="row">
-              {proyecto.data.page || proyecto.data.repo ? (
-                <a href={proyecto.data.page ?? proyecto.data.repo}>{proyecto.data.title}</a>
-              ) : (
-                <strong>{proyecto.data.title}</strong>
-              )}
-              {proyecto.data.tech.length > 0 && (
-                <span class="meta">{proyecto.data.tech.join(" · ")}</span>
-              )}
-            </div>
-            <p>{proyecto.data.description}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
-
-  {posts.length > 0 && (
-    <section class="home-section" aria-labelledby="blog-title">
-      <h2 id="blog-title">Lo último del blog</h2>
-      <ul class="list">
-        {posts.map((p) => (
-          <li>
-            <div class="row">
-              <a href={`/blog/${p.id}/`}>{p.data.title}</a>
-              <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
 </Base>
