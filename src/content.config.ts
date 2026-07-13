@@ -17,6 +17,7 @@ const proyectos = defineCollection({
     title: z.string(),
     description: z.string(),
     tech: z.array(z.string()).default([]),
+    page: z.string().optional(),
     repo: z.string().url().optional(),
     demo: z.string().url().optional(),
     order: z.number().default(0),

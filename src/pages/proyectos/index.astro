@@ -15,8 +15,8 @@ const proyectos = (await getCollection("proyectos"))
       {proyectos.map((p) => (
         <li>
           <div class="row">
-            {p.data.repo ? (
-              <a href={p.data.repo}>{p.data.title}</a>
+            {p.data.page || p.data.repo ? (
+              <a href={p.data.page ?? p.data.repo}>{p.data.title}</a>
             ) : (
               <strong>{p.data.title}</strong>
             )}

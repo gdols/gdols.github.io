@@ -52,8 +52,8 @@ const jsonLd = JSON.stringify({
         {proyectos.map((proyecto) => (
           <li>
             <div class="row">
-              {proyecto.data.repo ? (
-                <a href={proyecto.data.repo}>{proyecto.data.title}</a>
+              {proyecto.data.page || proyecto.data.repo ? (
+                <a href={proyecto.data.page ?? proyecto.data.repo}>{proyecto.data.title}</a>
               ) : (
                 <strong>{proyecto.data.title}</strong>
               )}
