@@ -26,7 +26,7 @@ const jsonLd = JSON.stringify({
       url: "https://gdols.dev/",
       email: "mailto:guille@gdols.dev",
       jobTitle: "Full stack developer",
-      knowsAbout: [".NET", "Blazor", "SQL Server", "Azure", "Data Science"],
+      knowsAbout: [".NET", "Blazor", "SQL Server", "Azure", "Data Science", "Android", "APIs"],
       sameAs: [
         "https://github.com/gdols",
         "https://www.linkedin.com/in/guillermodols/",
@@ -37,17 +37,22 @@ const jsonLd = JSON.stringify({
 ---
 <Base>
   <script type="application/ld+json" is:inline set:html={jsonLd} />
-  <h1>Hola, soy Guille</h1>
-  <p>
-    Programo, sobre todo con .NET, Blazor y SQL. Esta web es donde voy dejando
-    mis <a href="/proyectos/">proyectos</a> y <a href="/blog/">notas</a> de cosas
-    que me han costado resolver o que no quiero volver a buscar. Si a alguien más
-    le sirven, mejor.
-  </p>
+  <div class="home-intro">
+    <h1>Hola, soy Guille</h1>
+    <p class="lead">
+      Desarrollador full stack, principalmente con .NET, Blazor y SQL Server.
+      También trabajo con Azure y estudio el Grado de Data Science.
+    </p>
+    <p>
+      Esta web es donde voy dejando mis <a href="/proyectos/">proyectos</a> y
+      <a href="/blog/">notas</a> de cosas que me han costado resolver o que no
+      quiero volver a buscar. Si a alguien más le sirven, mejor.
+    </p>
+  </div>
 
   {proyectos.length > 0 && (
-    <>
-      <h2>Proyectos</h2>
+    <section class="home-section" aria-labelledby="proyectos-title">
+      <h2 id="proyectos-title">Proyectos</h2>
       <ul class="list">
         {proyectos.map((proyecto) => (
           <li>
@@ -65,12 +70,12 @@ const jsonLd = JSON.stringify({
           </li>
         ))}
       </ul>
-    </>
+    </section>
   )}
 
   {posts.length > 0 && (
-    <>
-      <h2>Lo último del blog</h2>
+    <section class="home-section" aria-labelledby="blog-title">
+      <h2 id="blog-title">Lo último del blog</h2>
       <ul class="list">
         {posts.map((p) => (
           <li>
@@ -81,6 +86,6 @@ const jsonLd = JSON.stringify({
           </li>
         ))}
       </ul>
-    </>
+    </section>
   )}
 </Base>
