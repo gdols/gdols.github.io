@@ -7,6 +7,10 @@ const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
 
+const proyectos = (await getCollection("proyectos"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -40,6 +44,29 @@ const jsonLd = JSON.stringify({
     que me han costado resolver o que no quiero volver a buscar. Si a alguien más
     le sirven, mejor.
   </p>
+
+  {proyectos.length > 0 && (
+    <>
+      <h2>Proyectos</h2>
+      <ul class="list">
+        {proyectos.map((proyecto) => (
+          <li>
+            <div class="row">
+              {proyecto.data.repo ? (
+                <a href={proyecto.data.repo}>{proyecto.data.title}</a>
+              ) : (
+                <strong>{proyecto.data.title}</strong>
+              )}
+              {proyecto.data.tech.length > 0 && (
+                <span class="meta">{proyecto.data.tech.join(" · ")}</span>
+              )}
+            </div>
+            <p>{proyecto.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
 
   {posts.length > 0 && (
     <>
