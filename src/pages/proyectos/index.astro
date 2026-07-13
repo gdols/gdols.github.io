@@ -24,15 +24,7 @@ const proyectos = (await getCollection("proyectos"))
               <span class="meta">{p.data.tech.join(" · ")}</span>
             )}
           </div>
-          <p>
-            {p.data.description}
-            {p.data.demo && (
-              <>
-                {" "}
-                <a href={p.data.demo}>Ver demo</a>
-              </>
-            )}
-          </p>
+          <p>{p.data.description}</p>
         </li>
       ))}
     </ul>
