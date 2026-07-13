@@ -28,8 +28,8 @@ const proyectos = (await getCollection("proyectos"))
             {p.data.description}
             {p.data.demo && (
               <>
-                {" — "}
-                <a href={p.data.demo}>demo</a>
+                {" "}
+                <a href={p.data.demo}>Ver demo</a>
               </>
             )}
           </p>
