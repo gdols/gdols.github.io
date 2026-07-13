@@ -154,7 +154,6 @@ a {
   text-underline-offset: 2px;
 }
 
-main > p,
 .home-intro p,
 article p {
   text-align: justify;
@@ -163,7 +162,7 @@ article p {
 }
 
 .home-intro {
-  margin-bottom: 2.75rem;
+  margin-bottom: 3.25rem;
 }
 
 .home-intro p {
@@ -175,12 +174,57 @@ article p {
   font-size: 1.125rem;
 }
 
-.home-section + .home-section {
+.home-current h2 {
+  font-size: 1.5rem;
+  margin: 0.2rem 0 0.65rem;
+}
+
+.home-current h2 a,
+.home-note h3 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.home-current h2 a:hover,
+.home-note h3 a:hover {
+  text-decoration: underline;
+}
+
+.home-label {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.home-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.15rem;
+  font-size: 0.9375rem;
+  margin: 1rem 0 0;
+}
+
+.home-note {
   margin-top: 2.75rem;
 }
 
-.home-section h2 {
-  margin-top: 0;
+.home-note h3 {
+  font-size: 1.125rem;
+  margin: 0.3rem 0 0.45rem;
+}
+
+.home-note p:last-child,
+.home-more {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.home-note p:last-child {
+  margin: 0;
+}
+
+.home-more {
+  margin: 2.75rem 0 0;
 }
 
 small,
@@ -289,7 +333,6 @@ article blockquote {
 }
 
 @media (max-width: 36rem) {
-  main > p,
   .home-intro p,
   article p {
     hyphens: none;
