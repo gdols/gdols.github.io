@@ -26,8 +26,7 @@ var envInfo = await environmentManager.GetEnvironmentInfoAsync(cancellationToken
 
 if (!forceReinstall && envInfo.IsReady &&
     envInfo.InstalledMarkItDownVersion is not null &&
-    versionGate.IsCompatible(envInfo.InstalledMarkItDownVersion, manifest) &&
-    !IsNewer(manifest.StableVersion, envInfo.InstalledMarkItDownVersion))
+    versionGate.IsCompatible(envInfo.InstalledMarkItDownVersion, manifest))
 {
     return SetupResult.AlreadyUpToDate(envInfo.InstalledMarkItDownVersion);
 }
@@ -38,9 +37,7 @@ return SetupResult.Installed(targetVersion);
 ```
 
 La ventana llama a este servicio al arrancar. La CLI lo usa con `mdpipe setup`.
-El código que decide si hay que instalar o actualizar solo está en un sitio. Si el
-manifiesto marca un estable más nuevo que el instalado, también actualiza, aunque
-la versión instalada siga estando en la lista de compatibles.
+El código que decide si hay que instalar o actualizar solo está en un sitio.
 
 ## Versiones que he probado
 
@@ -65,13 +62,6 @@ public string GetTargetVersion(CompatibilityManifest manifest) =>
 El manifiesto se consulta en GitHub y se guarda en caché durante 24 horas. El
 ejecutable también lleva una copia, de modo que una caída de GitHub no impide usar
 una versión que ya estaba validada.
-
-Este flujo ya ha pasado su primera prueba real. Cuando salió MarkItDown 0.1.7,
-la probé contra los mismos documentos que uso de referencia: la salida fue idéntica
-a la de 0.1.6 y la nueva versión traía arreglos en gráficos de PowerPoint y
-ecuaciones de Word. Actualicé el manifiesto, hice push, y todas las instalaciones
-se actualizan solas en su siguiente arranque. Sin publicar un ejecutable nuevo y
-sin que nadie tenga que descargar nada a mano. Para eso estaba montado todo esto.
 
 ## Un Python que no toca el del usuario
 
@@ -103,8 +93,6 @@ La parte que más tiempo me dio no fue la conversión. Fue preparar bien el prim
 arranque. pip no siempre hereda el proxy de Windows y el Python de Microsoft Store
 puede confirmar la creación de un entorno virtual sin dejar el intérprete donde se
 espera. MdPipe detecta ambos casos y muestra el error real cuando no puede continuar.
-Desde la 0.2.0 el primer arranque también enseña el progreso real de la descarga,
-que para una espera de un minuto largo cambia bastante la sensación.
 
 ## Lo que queda por mejorar
 
