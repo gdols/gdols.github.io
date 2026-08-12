@@ -325,6 +325,22 @@ article img {
   height: auto;
 }
 
+/* Fila de capturas de móvil (screenshots verticales) */
+article .shots {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1.75rem 0;
+}
+
+article .shots img {
+  width: 240px;
+  max-width: 44%;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
 article blockquote {
   margin: 1.5rem 0;
   padding-left: 1rem;
