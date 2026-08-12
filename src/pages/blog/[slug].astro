@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import Support from "../../components/Support.astro";
 import { formatDate } from "../../utils";
 
 export async function getStaticPaths() {
@@ -46,5 +47,6 @@ const jsonLd = JSON.stringify({
     </p>
     <Content />
   </article>
+  <Support text="¿Te ha servido esto? Puedes invitarme a un café patrocinándome en GitHub." />
   <p style="margin-top: 3rem;"><a href="/blog/">← Volver al blog</a></p>
 </Base>

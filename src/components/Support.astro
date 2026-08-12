@@ -1,0 +1,23 @@
+---
+interface Props {
+  text?: string;
+}
+const {
+  text = "Si algo de lo que hago te resulta útil, puedes patrocinarme en GitHub.",
+} = Astro.props;
+---
+<aside class="support">
+  <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+    <path
+      d="M12 20.3l-1.45-1.32C5.4 14.24 2 11.16 2 7.5 2 4.42 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09C13.09 2.81 14.76 2 16.5 2 19.58 2 22 4.42 22 7.5c0 3.66-3.4 6.74-8.55 11.49L12 20.3z"
+      fill="none"
+      stroke="var(--accent)"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+  </svg>
+  <span>
+    {text}{" "}
+    <a href="https://github.com/sponsors/gdols">Patrocíname</a>.
+  </span>
+</aside>
