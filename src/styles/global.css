@@ -5,6 +5,11 @@
   --muted: light-dark(#6b6b6b, #9a9a9a);
   --border: light-dark(#e5e5e5, #2a2a2a);
   --accent: light-dark(#0f62fe, #6ea8ff);
+  --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* Preferencia manual del selector de tema; sin atributo manda el sistema */
@@ -46,7 +51,9 @@ header.site {
 }
 
 header.site .brand {
-  font-weight: 650;
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   text-decoration: none;
   color: var(--text);
   white-space: nowrap;
@@ -66,6 +73,8 @@ header.site nav {
 }
 
 header.site nav a {
+  font-family: var(--mono);
+  font-size: 0.9rem;
   color: var(--muted);
   text-decoration: none;
 }
@@ -73,6 +82,13 @@ header.site nav a {
 header.site nav a:hover,
 header.site nav a[aria-current="page"] {
   color: var(--text);
+}
+
+header.site nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px;
 }
 
 /* Selector de tema */
@@ -120,7 +136,8 @@ footer.site {
   border-top: 1px solid var(--border);
   padding: 1.5rem 0 3rem;
   color: var(--muted);
-  font-size: 0.875rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -192,7 +209,10 @@ article p {
 
 .home-label {
   color: var(--muted);
-  font-size: 0.875rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   margin: 0;
 }
 
@@ -268,7 +288,8 @@ ul.list .row a:hover {
 ul.list time,
 ul.list .meta {
   color: var(--muted);
-  font-size: 0.875rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
   white-space: nowrap;
 }
 
@@ -278,6 +299,16 @@ ul.list p {
   font-size: 0.9375rem;
 }
 
+/* Meta del post (fecha · lectura) */
+.post-meta {
+  display: flex;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: 0 0 2rem;
+}
+
 /* Contenido de artículos */
 article :is(pre) {
   padding: 1rem;
@@ -285,6 +316,29 @@ article :is(pre) {
   border: 1px solid var(--border);
   overflow-x: auto;
   font-size: 0.875rem;
+}
+
+/* Etiqueta del lenguaje, tipo pestaña de editor (Shiki deja data-language) */
+article pre.astro-code {
+  position: relative;
+  padding-top: 2.35rem;
+}
+
+article pre.astro-code::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.3rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--border) 45%, transparent);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 0 6px 0;
 }
 
 /* Shiki genera los dos temas (claro y oscuro); cuando el tema oscuro

@@ -15,6 +15,9 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
+const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const readingMin = Math.max(1, Math.round(words / 200));
+
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -40,10 +43,10 @@ const jsonLd = JSON.stringify({
   <script type="application/ld+json" is:inline set:html={jsonLd} />
   <article>
     <h1>{post.data.title}</h1>
-    <p>
-      <time class="muted" datetime={post.data.date.toISOString()}>
-        {formatDate(post.data.date)}
-      </time>
+    <p class="post-meta">
+      <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{readingMin} min de lectura</span>
     </p>
     <Content />
   </article>
