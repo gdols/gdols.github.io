@@ -5,14 +5,10 @@ import { formatDate } from "../utils";
 
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 1);
+  .slice(0, 3);
 
-const proyectos = (await getCollection("proyectos"))
+const proyectos = (await getCollection("proyectos", (p) => p.data.featured))
   .sort((a, b) => a.data.order - b.data.order);
-
-const latestPost = posts[0];
-const mdpipe = proyectos.find((p) => p.id === "mdpipe");
-const apiverd = proyectos.find((p) => p.id === "apiverd");
 
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -54,38 +50,49 @@ const jsonLd = JSON.stringify({
       </p>
     </div>
 
-    {mdpipe && (
-      <section class="home-current" aria-labelledby="current-title">
-        <p class="home-label">Ahora mismo</p>
-        <h2 id="current-title">
-          <a href={mdpipe.data.repo}>{mdpipe.data.title}</a>
-        </h2>
-        <p>{mdpipe.data.description}</p>
-        <p class="home-links">
-          <a href="https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe">Descargar</a>
-          <a href={mdpipe.data.repo}>Ver el código</a>
-          <a href="/proyectos/">Más proyectos</a>
-        </p>
-
-        {latestPost && (
-          <div class="home-note">
-            <p class="home-label">
-              Última nota · <time datetime={latestPost.data.date.toISOString()}>{formatDate(latestPost.data.date)}</time>
-            </p>
-            <h3>
-              <a href={`/blog/${latestPost.id}/`}>{latestPost.data.title}</a>
-            </h3>
-            {latestPost.data.summary && <p>{latestPost.data.summary}</p>}
-          </div>
-        )}
+    {posts.length > 0 && (
+      <section class="home-section" aria-labelledby="home-notas">
+        <p class="home-label" id="home-notas">Últimas notas</p>
+        <ul class="list">
+          {posts.map((p) => (
+            <li>
+              <div class="row">
+                <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+                <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+              </div>
+              {p.data.summary && <p>{p.data.summary}</p>}
+            </li>
+          ))}
+        </ul>
+        <p class="home-all"><a href="/blog/">Todas las notas</a></p>
       </section>
     )}
 
-    {apiverd && (
-      <p class="home-more">
-        También trabajo en <a href={apiverd.data.demo}>Apiverd</a>, donde pruebo
-        aplicaciones Android, servicios API y productos pequeños.
-      </p>
+    {proyectos.length > 0 && (
+      <section class="home-section" aria-labelledby="home-proyectos">
+        <p class="home-label" id="home-proyectos">Proyectos</p>
+        <ul class="list">
+          {proyectos.map((p) => (
+            <li>
+              <div class="row">
+                {p.data.page || p.data.repo || p.data.demo ? (
+                  <a href={p.data.page ?? p.data.repo ?? p.data.demo}>{p.data.title}</a>
+                ) : (
+                  <strong>{p.data.title}</strong>
+                )}
+                {p.data.tech.length > 0 && (
+                  <span class="meta">{p.data.tech.join(" · ")}</span>
+                )}
+              </div>
+              <p>{p.data.description}</p>
+              {p.data.download && (
+                <p class="home-dl"><a href={p.data.download}>Descargar</a></p>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p class="home-all"><a href="/proyectos/">Todos los proyectos</a></p>
+      </section>
     )}
   </div>
 </Base>

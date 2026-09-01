@@ -4,5 +4,7 @@ description: "Aplicación portable para Windows que convierte documentos e imág
 tech: [".NET", "WPF", "Python"]
 page: "/blog/como-hice-mdpipe/"
 repo: "https://github.com/gdols/mdpipe"
+download: "https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe"
+featured: true
 order: 0
 ---

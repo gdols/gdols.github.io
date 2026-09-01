@@ -191,20 +191,12 @@ article p {
   font-size: 1.125rem;
 }
 
-.home-current h2 {
-  font-size: 1.5rem;
-  margin: 0.2rem 0 0.65rem;
+.home-section {
+  margin-top: 3.25rem;
 }
 
-.home-current h2 a,
-.home-note h3 a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-.home-current h2 a:hover,
-.home-note h3 a:hover {
-  text-decoration: underline;
+.home-section .home-label {
+  margin-bottom: 0.85rem;
 }
 
 .home-label {
@@ -216,35 +208,17 @@ article p {
   margin: 0;
 }
 
-.home-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.15rem;
-  font-size: 0.9375rem;
-  margin: 1rem 0 0;
-}
-
-.home-note {
-  margin-top: 2.75rem;
-}
-
-.home-note h3 {
-  font-size: 1.125rem;
-  margin: 0.3rem 0 0.45rem;
-}
-
-.home-note p:last-child,
-.home-more {
-  color: var(--muted);
+.home-all,
+.home-dl {
   font-size: 0.9375rem;
 }
 
-.home-note p:last-child {
-  margin: 0;
+.home-all {
+  margin: 1.1rem 0 0;
 }
 
-.home-more {
-  margin: 2.75rem 0 0;
+.home-dl {
+  margin: 0.4rem 0 0;
 }
 
 small,

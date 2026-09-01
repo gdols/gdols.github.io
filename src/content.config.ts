@@ -20,6 +20,8 @@ const proyectos = defineCollection({
     page: z.string().optional(),
     repo: z.string().url().optional(),
     demo: z.string().url().optional(),
+    download: z.string().url().optional(),
+    featured: z.boolean().default(false),
     order: z.number().default(0),
   }),
 });
