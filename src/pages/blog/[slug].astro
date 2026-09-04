@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Support from "../../components/Support.astro";
 import { formatDate } from "../../utils";
+import { sourceImageFor } from "../../../scripts/og-cards.mjs";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", (p) => !p.data.draft);
@@ -15,6 +16,11 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
+// Si la entrada tiene imagen propia, scripts/og-cards.mjs le ha compuesto una
+// tarjeta 1200x630; si no, cae en la de marca.
+const cardSource = post.data.image ?? sourceImageFor(post.body ?? "");
+const ogImage = cardSource ? `/og/${post.id}.png` : "/og.png";
+
 const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
 const readingMin = Math.max(1, Math.round(words / 200));
 
@@ -26,7 +32,7 @@ const jsonLd = JSON.stringify({
   datePublished: post.data.date.toISOString(),
   inLanguage: "es",
   url: new URL(`/blog/${post.id}/`, Astro.site),
-  image: new URL("/og.png", Astro.site),
+  image: new URL(ogImage, Astro.site),
   author: {
     "@type": "Person",
     name: "Guille Dols",
@@ -39,6 +45,7 @@ const jsonLd = JSON.stringify({
   description={post.data.summary}
   type="article"
   date={post.data.date}
+  image={ogImage}
 >
   <script type="application/ld+json" is:inline set:html={jsonLd} />
   <article>

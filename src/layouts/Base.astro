@@ -6,6 +6,7 @@ interface Props {
   description?: string;
   type?: "website" | "article";
   date?: Date;
+  image?: string;
 }
 
 const {
@@ -13,10 +14,12 @@ const {
   description = "Web personal de Guille. Notas y proyectos sobre .NET, Blazor y SQL.",
   type = "website",
   date,
+  image = "/og.png",
 } = Astro.props;
 const fullTitle = title ? `${title} · gdols.dev` : "gdols.dev";
 const path = Astro.url.pathname;
 const url = new URL(path, Astro.site);
+const imageUrl = new URL(image, Astro.site);
 const current = (prefix: string) =>
   path.startsWith(prefix) ? "page" : undefined;
 ---
@@ -31,15 +34,24 @@ const current = (prefix: string) =>
     <link rel="canonical" href={url} />
     <link rel="alternate" type="application/rss+xml" title="gdols.dev" href="/rss.xml" />
     <meta property="og:site_name" content="gdols.dev" />
+    <meta property="og:locale" content="es_ES" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={url} />
-    <meta property="og:image" content={new URL("/og.png", Astro.site)} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title ?? "gdols.dev"} />
     {type === "article" && date && (
       <meta property="article:published_time" content={date.toISOString()} />
     )}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@guillermodols" />
+    <meta name="twitter:creator" content="@guillermodols" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <script is:inline>
       // Antes del primer pintado, para evitar el destello de tema equivocado
