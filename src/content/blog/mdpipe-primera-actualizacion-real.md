@@ -122,6 +122,9 @@ a que alguien lo encuentre meses después.
 Ahora la aplicación compila y pasa los tests en cada push con GitHub Actions, y cada etiqueta de
 versión construye el ejecutable portable y lo sube a la release sola.
 
+Si has llegado aquí buscando cómo usarlo y no cómo está hecho, lo conté aparte en
+[Convertir PDF a Markdown para usarlo con ChatGPT](/blog/documentos-a-markdown-para-ia/).
+
 [Descargar MdPipe.exe](https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe)
 · [Ver el código](https://github.com/gdols/mdpipe)
 · [Releases](https://github.com/gdols/mdpipe/releases)

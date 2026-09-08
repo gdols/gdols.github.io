@@ -101,6 +101,9 @@ espera. MdPipe detecta ambos casos y muestra el error real cuando no puede conti
 - El binario todavía no está firmado, así que Windows puede mostrar un aviso.
 - La calidad de la conversión depende del tipo y de la estructura del documento.
 
+Si has llegado aquí buscando cómo usarlo y no cómo está hecho, lo conté aparte en
+[Convertir PDF a Markdown para usarlo con ChatGPT](/blog/documentos-a-markdown-para-ia/).
+
 [Descargar MdPipe.exe](https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe)
 · [Ver el código](https://github.com/gdols/mdpipe)
 · [Releases](https://github.com/gdols/mdpipe/releases)

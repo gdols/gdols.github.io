@@ -1,7 +1,7 @@
 ---
-title: "Cómo convertir tus documentos a Markdown para usarlos con ChatGPT"
+title: "Convertir PDF a Markdown para usarlo con ChatGPT"
 date: 2026-09-08
-summary: "Subir un PDF a una IA funciona hasta que deja de funcionar: cuando son cuarenta, cuando llevan tablas, o cuando el modelo que quieres usar no acepta PDFs. La solución es pasarlos a texto antes, y en Windows se puede hacer sin instalar nada."
+summary: "Subir un PDF a una IA funciona hasta que son cuarenta, o llevan tablas. Cómo convertirlos a Markdown en Windows sin instalar nada. Word y Excel también."
 draft: false
 ---
 
@@ -29,10 +29,11 @@ que no dicen nada.
 Es también lo que leen Obsidian, Notion y prácticamente cualquier aplicación de notas
 que se haya escrito en los últimos diez años.
 
-## Cómo lo hago yo
+## Cómo convertir un PDF a Markdown en Windows
 
 Escribí una aplicación para esto, [MdPipe](https://github.com/gdols/mdpipe), porque me
-cansé de explicarle a la gente cómo instalar Python.
+cansé de explicarle a la gente cómo instalar Python. Si te interesa el cómo, lo conté en
+[esta entrada](/blog/como-hice-mdpipe/).
 
 Es un solo archivo. Lo descargas, haces doble clic y arrastras encima los documentos o
 la carpeta entera. No hay instalador, no hay que configurar nada y no necesitas tener
@@ -51,7 +52,8 @@ sitio, que para papeles del trabajo o del médico no es un detalle menor.
 
 Lee PDF, Word, Excel, PowerPoint, EPUB, páginas web, imágenes, audio, correos de Outlook
 y ficheros ZIP con todo lo anterior dentro. Son 28 formatos, y la propia aplicación te
-enseña la lista real de tu ordenador en vez de una escrita a mano.
+enseña la lista real de tu ordenador en vez de una escrita a mano, que es una de las cosas
+que [cambiaron entre la 0.2 y la 0.7](/blog/mdpipe-de-la-0-2-a-la-0-7/).
 
 ![Diálogo con los 28 formatos que reconoce](/images/mdpipe-formatos.png)
 
@@ -84,7 +86,7 @@ Hay más interfaces gráficas para MarkItDown por ahí, casi todas también en P
 ninguna con un ejecutable que puedas descargar. Si buscas, mira eso antes que nada: si
 para probarlo tienes que clonar un repositorio, no era para ti.
 
-## Lo que yo hago con esto
+## Para qué lo uso yo
 
 Mi caso es aburrido y probablemente parecido al tuyo. Tengo documentación técnica en PDF
 que quiero poder preguntarle a una IA sin subirla a ningún sitio, y facturas y papeleo

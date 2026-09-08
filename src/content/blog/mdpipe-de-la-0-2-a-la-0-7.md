@@ -104,6 +104,9 @@ archivo, se saltaban una carpeta, se quedaban con una lista de formatos que ya n
 verdad. Nada de eso sale en un log ni en un informe de error, porque para la aplicación
 todo fue bien.
 
+Si has llegado aquí buscando cómo usarlo y no cómo está hecho, lo conté aparte en
+[Convertir PDF a Markdown para usarlo con ChatGPT](/blog/documentos-a-markdown-para-ia/).
+
 [Descargar MdPipe.exe](https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe)
 · [Ver el código](https://github.com/gdols/mdpipe)
 · [Releases](https://github.com/gdols/mdpipe/releases)
