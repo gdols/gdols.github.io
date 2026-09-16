@@ -45,9 +45,13 @@ Se genera sola antes de cada `npm run build`. Para rehacerlas a mano:
 npm run og
 ```
 
-Para comprobar cómo queda una URL: [opengraph.xyz](https://www.opengraph.xyz) o
-el validador de tarjetas de X. Si cambias la imagen de un post ya compartido,
-esas herramientas cachean, así que puede tardar en reflejarse.
+El título de la tarjeta va sin el " · gdols.dev" de la pestaña, porque X ya
+enseña el dominio y con el sufijo los títulos largos se cortan.
+
+Para comprobar cómo queda una URL: [opengraph.xyz](https://www.opengraph.xyz).
+X lee la tarjeta la primera vez que alguien pega el enlace y la guarda unos días,
+así que conviene publicar en X cuando el despliegue ya ha terminado. Si aun así
+sale mal, pegar el enlace con algo detrás (`?x=2`) le obliga a leerla de nuevo.
 
 ## Trastear en local
 
