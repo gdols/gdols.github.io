@@ -1,0 +1,454 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import { formatDate } from "../utils";
+
+// Texto buscable ya limpio, para no meter markdown crudo dentro del <script>
+const limpiar = (texto) =>
+  texto
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+
+const notas = (await getCollection("blog", (p) => !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((p) => ({
+    slug: p.id,
+    title: p.data.title,
+    summary: p.data.summary ?? "",
+    date: p.data.date.toISOString().slice(0, 10),
+    fecha: formatDate(p.data.date),
+    url: `/blog/${p.id}/`,
+    texto: limpiar([p.data.title, p.data.summary ?? "", p.id, p.body ?? ""].join(" ")),
+  }));
+
+// Token del origin trial para gdols.dev (developer.chrome.com/origintrials).
+// Vacio, la pagina solo funciona con el flag enable-webmcp-testing.
+const originTrial = "";
+---
+<Base
+  title="WebMCP en esta web"
+  description="Una demo real: esta página registra dos herramientas WebMCP y las ejecuta delante de ti."
+  image="/og/webmcp-en-mi-web.png"
+>
+  {originTrial && (
+    <meta slot="head" http-equiv="origin-trial" content={originTrial} />
+  )}
+
+  <h1>WebMCP en esta web</h1>
+  <p class="lead">
+    Un agente que entra hoy en una web tiene que apañárselas mirando la pantalla
+    y simulando clics, como una persona pero a ciegas. <strong>WebMCP</strong> es
+    una propuesta para que la propia página le diga qué sabe hacer y cómo
+    pedírselo. Esta página lo hace de verdad, no es un dibujo.
+  </p>
+
+  <p class="mcp-estado" id="mcp-estado" data-nivel="cargando">
+    Comprobando si tu navegador expone <code>document.modelContext</code>…
+  </p>
+
+  <div class="mcp-tutorial" id="mcp-tutorial" hidden>
+    <p>Para verlo funcionando necesitas Chrome 149 o superior y un minuto:</p>
+    <ol>
+      <li>
+        Copia <code>chrome://flags/#enable-webmcp-testing</code> en la barra de
+        direcciones y cambia <em>WebMCP for testing</em> a <strong>Enabled</strong>.
+        <img
+          src="/images/webmcp-flag.png"
+          alt="El flag WebMCP for testing puesto en Enabled"
+          width="1520"
+          height="170"
+          loading="lazy"
+        />
+      </li>
+      <li>
+        Pulsa <strong>Reiniciar</strong> en la barra que sale abajo. Cerrar la
+        ventana a veces no basta, porque Chrome puede seguir abierto por detrás y
+        el flag no se aplica hasta que arranca de nuevo.
+        <img
+          src="/images/webmcp-reiniciar.png"
+          alt="Barra de Chrome avisando de que hay que reiniciar, con el botón Reiniciar"
+          width="1720"
+          height="168"
+          loading="lazy"
+        />
+      </li>
+      <li>Vuelve a esta página. El aviso de arriba tiene que cambiar y decir que tu navegador soporta WebMCP.</li>
+    </ol>
+    <p>
+      Cuando acabes, puedes dejar el flag otra vez en <em>Default</em>. Es una API
+      experimental y no hace falta tenerla puesta para nada más.
+    </p>
+  </div>
+
+  <h2>1. La página, como siempre</h2>
+  <p>
+    Esto es un buscador normal sobre mis entradas del blog: escribes y la lista
+    de abajo se filtra. HTML y JavaScript de toda la vida, pensado para que lo
+    use una persona con los ojos y el teclado.
+  </p>
+
+  <div class="mcp-buscador">
+    <label for="mcp-consulta">Buscar en las notas</label>
+    <input id="mcp-consulta" type="search" placeholder="markitdown, mallorca, tests…" autocomplete="off" />
+    <span class="mcp-contador" id="mcp-contador"></span>
+  </div>
+
+  <ul class="list" id="mcp-lista"></ul>
+
+  <h2>2. Lo mismo, pero con nombre y manual de uso</h2>
+  <p>
+    Aquí está el cambio. Cojo la función que ya usa el buscador de arriba y la
+    registro como <em>herramienta</em>: le pongo un nombre, una descripción en
+    castellano y un esquema que dice qué parámetros acepta. Eso es todo lo que
+    necesita un agente para llamarla sin adivinar nada.
+  </p>
+
+  <pre class="mcp-code"><code>{`await document.modelContext.registerTool({
+  name: "buscar-notas",
+  description: "Busca entradas del blog de Guille por texto en el título, el resumen o el cuerpo.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      consulta: { type: "string", description: "Palabras a buscar." }
+    }
+  },
+  execute({ consulta }) {
+    const encontradas = buscarNotas(consulta);   // la misma función del buscador
+    return { content: [{ type: "text", text: JSON.stringify(encontradas) }] };
+  }
+});`}</code></pre>
+
+  <p>
+    Lo importante es la línea del <code>execute</code>: no he escrito una
+    segunda versión de la búsqueda para el agente. Llama exactamente a la misma
+    función que el buscador, así que la página no se queda por detrás de lo que
+    el agente acaba de hacer.
+  </p>
+
+  <h2>3. Un agente de prueba, aquí mismo</h2>
+  <p>
+    WebMCP deja que un guion de la propia página haga de agente con
+    <code>getTools()</code> y <code>executeTool()</code>. Eso es lo que hay
+    debajo. El panel <strong>no sabe nada de mi web</strong>: le pregunta al
+    navegador qué herramientas hay y construye los campos leyendo el esquema que
+    le devuelven. Por eso los nombres de los campos salen solos.
+  </p>
+  <p>
+    Al pulsar el botón no llamo yo a la función. Se la pido al navegador, que
+    hace de intermediario y la ejecuta. Mira la lista de la sección 1 mientras
+    tanto: cambia sola.
+  </p>
+
+  <div class="mcp-panel" id="mcp-panel"></div>
+
+  <p class="home-label" id="mcp-registro-titulo" hidden>Registro de llamadas</p>
+  <ol class="mcp-registro" id="mcp-registro" hidden></ol>
+
+  <figure class="mcp-captura" id="mcp-captura" hidden>
+    <img
+      src="/images/webmcp-registro.png"
+      alt="Registro de llamadas: el agente llama a buscar-notas, la página filtra la lista y devuelve seis entradas"
+      width="1360"
+      height="868"
+      loading="lazy"
+    />
+    <figcaption>
+      Así se ve en Chrome 153 con el flag activado, después de pedirle a
+      <code>buscar-notas</code> que busque «markitdown».
+    </figcaption>
+  </figure>
+
+  <h2>Dónde está esto a día de hoy</h2>
+  <p>
+    Es una propuesta, no un estándar. Se incuba en el Web Machine Learning
+    Community Group y las revisiones de TAG, seguridad y privacidad están las
+    tres pendientes. Chrome tiene un origin trial desde la 149 y Edge desde la
+    150; para probarlo en local basta con activar el flag
+    <code>about:flags#enable-webmcp-testing</code>. Firefox y Safari, de momento,
+    no han dicho ni que sí ni que no.
+  </p>
+  <p>
+    Y se mueve rápido. En Chrome 153 <code>executeTool()</code> solo acepta los
+    argumentos como texto JSON, aunque la documentación pida un objeto, y esa misma
+    documentación ya avisa de que el texto queda obsoleto en la 155. Lo conté en
+    <a href="/blog/webmcp-en-mi-web/">la entrada sobre esta demo</a>.
+  </p>
+  <p>
+    Las dos herramientas de esta página solo leen contenido que ya es público y
+    no hay sesión ni datos de nadie por medio. Lo digo porque la seguridad es la
+    parte incómoda de todo esto: una web que expone herramientas está exponiendo
+    algo más que texto, y la inyección de prompt aparece en la propia ficha de
+    Chrome como riesgo conocido.
+  </p>
+  <p>
+    <a href="https://github.com/webmachinelearning/webmcp">Explainer de WebMCP</a>
+    · <a href="https://chromestatus.com/feature/5117755740913664">Ficha en Chrome Status</a>
+    · <a href="https://developer.chrome.com/docs/ai/webmcp">Documentación de Chrome</a>
+  </p>
+</Base>
+
+<script is:inline define:vars={{ notas }}>
+  const lista = document.getElementById("mcp-lista");
+  const contador = document.getElementById("mcp-contador");
+  const campo = document.getElementById("mcp-consulta");
+  const estado = document.getElementById("mcp-estado");
+  const panel = document.getElementById("mcp-panel");
+  const registro = document.getElementById("mcp-registro");
+  const registroTitulo = document.getElementById("mcp-registro-titulo");
+
+  function pintarLista(items, resaltada) {
+    lista.replaceChildren();
+    for (const nota of items) {
+      const fila = document.createElement("div");
+      fila.className = "row";
+      const enlace = document.createElement("a");
+      enlace.href = nota.url;
+      enlace.textContent = nota.title;
+      const fecha = document.createElement("time");
+      fecha.dateTime = nota.date;
+      fecha.textContent = nota.fecha;
+      fila.append(enlace, fecha);
+
+      const resumen = document.createElement("p");
+      resumen.textContent = nota.summary;
+
+      const item = document.createElement("li");
+      if (nota.slug === resaltada) item.className = "mcp-resaltada";
+      item.append(fila, resumen);
+      lista.append(item);
+    }
+
+    if (items.length === 0) {
+      const vacio = document.createElement("li");
+      vacio.className = "mcp-vacio";
+      vacio.textContent = "Ninguna entrada coincide con esa búsqueda.";
+      lista.append(vacio);
+    }
+
+    contador.textContent = items.length === 1 ? "1 entrada" : items.length + " entradas";
+  }
+
+  // Sin tildes y en minusculas, para que "como" encuentre "Cómo".
+  function normalizar(texto) {
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  const indice = new Map(notas.map((n) => [n.slug, normalizar(n.texto)]));
+
+  // La usan el buscador y la herramienta. Tienen que aparecer todas las palabras.
+  function buscarNotas(consulta) {
+    const palabras = normalizar(consulta || "")
+      .split(/\s+/)
+      .filter(Boolean);
+    const encontradas = palabras.length
+      ? notas.filter((n) => palabras.every((palabra) => indice.get(n.slug).includes(palabra)))
+      : notas;
+    pintarLista(encontradas);
+    return encontradas;
+  }
+
+  function apuntar(quien, texto) {
+    const etiqueta = document.createElement("span");
+    etiqueta.className = "mcp-quien";
+    etiqueta.textContent = quien;
+    const cuerpo = document.createElement("pre");
+    cuerpo.textContent = texto;
+    const item = document.createElement("li");
+    item.append(etiqueta, cuerpo);
+    registro.append(item);
+    registro.hidden = false;
+    registroTitulo.hidden = false;
+  }
+
+  function comoTexto(valor) {
+    return { content: [{ type: "text", text: JSON.stringify(valor, null, 2) }] };
+  }
+
+  // La documentacion pide un objeto, pero Chrome 153 solo acepta texto JSON
+  async function ejecutarHerramienta(herramienta, argumentos) {
+    try {
+      return await document.modelContext.executeTool(herramienta, argumentos);
+    } catch (error) {
+      if (!/parse input arguments/i.test(String(error))) throw error;
+      apuntar("aviso", "Este Chrome rechaza el objeto (" + error.message + "). Repito con texto JSON.");
+      return document.modelContext.executeTool(herramienta, JSON.stringify(argumentos));
+    }
+  }
+
+  // El resultado vuelve como texto JSON con otro JSON dentro; saco el de dentro para leerlo
+  function legible(resultado) {
+    try {
+      const sobre = typeof resultado === "string" ? JSON.parse(resultado) : resultado;
+      return JSON.stringify(JSON.parse(sobre.content[0].text), null, 2);
+    } catch {
+      return typeof resultado === "string" ? resultado : JSON.stringify(resultado, null, 2);
+    }
+  }
+
+  const herramientas = [
+    {
+      name: "buscar-notas",
+      description:
+        "Busca entradas del blog de Guille por texto en el título, el resumen o el cuerpo de la entrada, y filtra la lista visible en la página.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          consulta: {
+            type: "string",
+            description: "Palabras a buscar. Tienen que aparecer todas. Vacío devuelve todas las entradas.",
+          },
+        },
+      },
+      execute({ consulta }) {
+        campo.value = consulta || "";
+        const encontradas = buscarNotas(consulta);
+        apuntar("buscar-notas", "La página filtra la lista: " + encontradas.length + " entrada(s).");
+        return comoTexto({
+          total: encontradas.length,
+          notas: encontradas.map((n) => ({ slug: n.slug, titulo: n.title, url: n.url })),
+        });
+      },
+    },
+    {
+      name: "resumen-de-nota",
+      description:
+        "Devuelve el título, la fecha, el resumen y la URL de una entrada concreta, y la resalta en la lista.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          slug: {
+            type: "string",
+            description: "Identificador de la entrada, por ejemplo un-bug-en-las-ecuaciones-de-markitdown.",
+          },
+        },
+        required: ["slug"],
+      },
+      execute({ slug }) {
+        const nota = notas.find((n) => n.slug === slug);
+        if (!nota) {
+          apuntar("resumen-de-nota", "No existe ninguna entrada con el slug " + slug + ".");
+          return comoTexto({ error: "No hay ninguna entrada con ese slug.", slug: slug });
+        }
+        campo.value = "";
+        pintarLista(notas, slug);
+        apuntar("resumen-de-nota", "La página resalta la entrada " + slug + ".");
+        return comoTexto({
+          titulo: nota.title,
+          fecha: nota.date,
+          resumen: nota.summary,
+          url: new URL(nota.url, location.origin).href,
+        });
+      },
+    },
+  ];
+
+  // El panel se construye leyendo lo que devuelve getTools(), no mis constantes.
+  async function pintarPanel() {
+    const disponibles = await document.modelContext.getTools();
+    panel.replaceChildren();
+
+    for (const herramienta of disponibles) {
+      const formulario = document.createElement("form");
+      formulario.className = "mcp-herramienta";
+
+      const nombre = document.createElement("code");
+      nombre.textContent = herramienta.name;
+      const descripcion = document.createElement("p");
+      descripcion.textContent = herramienta.description;
+      formulario.append(nombre, descripcion);
+
+      const entradas = new Map();
+      // Chrome 153 lo devuelve como texto JSON, no como objeto
+      const esquemaEntrada =
+        typeof herramienta.inputSchema === "string"
+          ? JSON.parse(herramienta.inputSchema)
+          : herramienta.inputSchema;
+      const propiedades = (esquemaEntrada && esquemaEntrada.properties) || {};
+      for (const [clave, esquema] of Object.entries(propiedades)) {
+        const etiqueta = document.createElement("label");
+        etiqueta.textContent = clave;
+        const entrada = document.createElement("input");
+        entrada.type = "text";
+        entrada.placeholder = esquema.description || "";
+        etiqueta.append(entrada);
+        formulario.append(etiqueta);
+        entradas.set(clave, entrada);
+      }
+
+      const boton = document.createElement("button");
+      boton.type = "submit";
+      boton.textContent = "executeTool()";
+      formulario.append(boton);
+
+      formulario.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
+        const argumentos = {};
+        for (const [clave, entrada] of entradas) {
+          if (entrada.value.trim()) argumentos[clave] = entrada.value.trim();
+        }
+        apuntar("agente", "executeTool(" + herramienta.name + ", " + JSON.stringify(argumentos) + ")");
+        try {
+          const resultado = await ejecutarHerramienta(herramienta, argumentos);
+          apuntar("resultado", legible(resultado));
+        } catch (error) {
+          apuntar("error", String(error));
+        }
+      });
+
+      panel.append(formulario);
+    }
+  }
+
+  async function arrancar() {
+    pintarLista(notas);
+    campo.addEventListener("input", () => buscarNotas(campo.value));
+
+    if (!("modelContext" in document)) {
+      estado.dataset.nivel = "aviso";
+      estado.textContent =
+        "Tu navegador no expone document.modelContext, así que el buscador de la sección 1 funciona pero no hay herramientas que registrar. Hace falta Chrome 149 o Edge 150 en adelante, con el flag about:flags#enable-webmcp-testing activado, y recargar la página.";
+      panel.textContent =
+        "Aquí saldrían las herramientas de la página, con un campo por cada parámetro de su esquema. Como tu navegador no soporta WebMCP, debajo tienes cómo se ve funcionando.";
+      panel.classList.add("mcp-sin-soporte");
+      document.getElementById("mcp-tutorial").hidden = false;
+      document.getElementById("mcp-captura").hidden = false;
+      return;
+    }
+
+    try {
+      for (const herramienta of herramientas) {
+        await document.modelContext.registerTool(herramienta);
+      }
+    } catch (error) {
+      estado.dataset.nivel = "aviso";
+      estado.textContent =
+        "document.modelContext existe, pero registrar las herramientas ha fallado: " + error;
+      return;
+    }
+
+    estado.dataset.nivel = "ok";
+    estado.textContent =
+      "Tu navegador soporta WebMCP. Esta página ha registrado " +
+      herramientas.length +
+      " herramientas.";
+
+    // El explainer va por delante de Chrome: puede registrar sin saber listar
+    if (typeof document.modelContext.getTools !== "function") {
+      panel.textContent =
+        "Las herramientas están registradas y un agente del navegador puede usarlas, pero tu versión de Chrome todavía no deja que la propia página las liste con getTools(), así que el panel de prueba no se puede montar.";
+      panel.classList.add("mcp-sin-soporte");
+      return;
+    }
+
+    try {
+      await pintarPanel();
+      estado.textContent += " Puedes ejecutarlas en la sección 3.";
+    } catch (error) {
+      panel.textContent = "Las herramientas están registradas, pero getTools() ha fallado: " + error;
+      panel.classList.add("mcp-sin-soporte");
+    }
+  }
+
+  arrancar();
+</script>
