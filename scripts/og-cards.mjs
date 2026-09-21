@@ -31,8 +31,9 @@ export function sourceImageFor(markdown) {
   if (declared) return declared[1];
 
   const body = frontmatter ? markdown.slice(frontmatter[0].length) : markdown;
-  const inline = body.match(/!\[[^\]]*\]\((\/images\/[^)\s]+)\)/);
-  return inline?.[1] ?? null;
+  // Markdown o <img>, la que aparezca antes (las filas de capturas de móvil van en HTML)
+  const inline = body.match(/!\[[^\]]*\]\((\/images\/[^)\s]+)\)|<img[^>]+src="(\/images\/[^"]+)"/);
+  return inline?.[1] ?? inline?.[2] ?? null;
 }
 
 async function buildCard(slug, source) {
