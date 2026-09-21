@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  proyecto: CollectionEntry<"proyectos">;
+}
+
+const { proyecto } = Astro.props;
+const d = proyecto.data;
+const principal = d.page ?? d.demo ?? d.repo;
+
+const enlaces = [
+  d.download && { href: d.download, texto: "Descargar", principal: true },
+  d.page && { href: d.page, texto: d.page.startsWith("/") ? "Cómo lo hice" : "Web" },
+  d.demo && { href: d.demo, texto: d.demo.includes("play.google.com") ? "Google Play" : "Web" },
+  d.repo && { href: d.repo, texto: "Código" },
+].filter(Boolean) as { href: string; texto: string; principal?: boolean }[];
+---
+<div class="tarjeta tarjeta-proyecto">
+  <div class="tarjeta-imagen">
+    {d.image ? (
+      <img src={d.image} alt="" loading="lazy" decoding="async" />
+    ) : (
+      <span class="sin-portada sin-portada-texto">{d.title}</span>
+    )}
+  </div>
+  <div class="tarjeta-cuerpo">
+    <h3>{principal ? <a href={principal}>{d.title}</a> : d.title}</h3>
+    <p class="tarjeta-resumen">{d.description}</p>
+    {d.tech.length > 0 && (
+      <ul class="chips" aria-label="Tecnologías">
+        {d.tech.map((t) => <li>{t}</li>)}
+      </ul>
+    )}
+    {enlaces.length > 0 && (
+      <p class="tarjeta-acciones">
+        {enlaces.map((e) => (
+          <a class:list={["boton", "boton-pequeno", { "boton-secundario": !e.principal }]} href={e.href}>
+            {e.texto}
+          </a>
+        ))}
+      </p>
+    )}
+  </div>
+</div>

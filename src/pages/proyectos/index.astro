@@ -1,32 +1,23 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import TarjetaProyecto from "../../components/TarjetaProyecto.astro";
 
 const proyectos = (await getCollection("proyectos"))
   .sort((a, b) => a.data.order - b.data.order);
 ---
-<Base title="Proyectos" description="Cosas que he hecho: .NET, Blazor, SQL y algún experimento.">
-  <h1>Proyectos</h1>
+<Base title="Proyectos" description="Cosas que he hecho: .NET, Blazor, SQL y algún experimento." ancho="pagina">
+  <header class="cabecera-pagina">
+    <p class="antetitulo">{proyectos.length} proyectos</p>
+    <h1>Proyectos</h1>
+    <p class="lead">Cosas que he hecho: .NET, Blazor, SQL y algún experimento.</p>
+  </header>
 
   {proyectos.length === 0 ? (
     <p class="muted">Aún no hay nada por aquí.</p>
   ) : (
-    <ul class="list">
-      {proyectos.map((p) => (
-        <li>
-          <div class="row">
-            {p.data.page || p.data.repo || p.data.demo ? (
-              <a href={p.data.page ?? p.data.repo ?? p.data.demo}>{p.data.title}</a>
-            ) : (
-              <strong>{p.data.title}</strong>
-            )}
-            {p.data.tech.length > 0 && (
-              <span class="meta">{p.data.tech.join(" · ")}</span>
-            )}
-          </div>
-          <p>{p.data.description}</p>
-        </li>
-      ))}
-    </ul>
+    <div class="rejilla rejilla-2">
+      {proyectos.map((p) => <TarjetaProyecto proyecto={p} />)}
+    </div>
   )}
 </Base>

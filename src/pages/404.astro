@@ -2,7 +2,13 @@
 import Base from "../layouts/Base.astro";
 ---
 <Base title="Página no encontrada">
-  <h1>404</h1>
-  <p>Aquí no hay nada. O me he cargado la página, o el enlace estaba mal.</p>
-  <p><a href="/">← Volver al inicio</a></p>
+  <div class="no-encontrada">
+    <p class="no-encontrada-numero degradado">404</p>
+    <h1>Aquí no hay nada</h1>
+    <p>O me he cargado la página, o el enlace estaba mal.</p>
+    <p class="acciones">
+      <a class="boton" href="/">Volver al inicio</a>
+      <a class="boton boton-secundario" href="/blog/">Ir al blog</a>
+    </p>
+  </div>
 </Base>

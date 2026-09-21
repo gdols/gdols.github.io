@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Logo from "./Logo.astro";
+import { formatDate, minutosDeLectura, portadaDe } from "../utils";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  destacada?: boolean;
+}
+
+const { post, destacada = false } = Astro.props;
+const portada = portadaDe(post);
+const url = `/blog/${post.id}/`;
+---
+<div class:list={["tarjeta", "tarjeta-nota", { destacada }]}>
+  <div class="tarjeta-imagen">
+    {portada ? (
+      <img src={portada} alt="" width="1200" height="630" loading="lazy" decoding="async" />
+    ) : (
+      <span class="sin-portada"><Logo size={56} /></span>
+    )}
+  </div>
+  <div class="tarjeta-cuerpo">
+    {destacada && <p class="antetitulo">Última entrada</p>}
+    <p class="tarjeta-meta">
+      <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{minutosDeLectura(post.body)} min</span>
+    </p>
+    <h3><a href={url}>{post.data.title}</a></h3>
+    {post.data.summary && <p class="tarjeta-resumen">{post.data.summary}</p>}
+  </div>
+</div>

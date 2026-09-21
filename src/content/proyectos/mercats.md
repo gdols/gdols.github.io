@@ -5,5 +5,6 @@ tech: ["Android", "Kotlin"]
 page: "https://apiverd.com/mercats/"
 demo: "https://play.google.com/store/apps/details?id=com.apiverd.mercats"
 featured: true
+image: "/images/mercats-feature.png"
 order: 1
 ---

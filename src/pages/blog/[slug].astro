@@ -1,28 +1,27 @@
 ---
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import Logo from "../../components/Logo.astro";
 import Support from "../../components/Support.astro";
-import { formatDate } from "../../utils";
-import { sourceImageFor } from "../../../scripts/og-cards.mjs";
+import { formatDate, minutosDeLectura, portadaDe } from "../../utils";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", (p) => !p.data.draft);
-  return posts.map((post) => ({
+  const posts = (await getCollection("blog", (p) => !p.data.draft))
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return posts.map((post, i) => ({
     params: { slug: post.id },
-    props: { post },
+    // La lista va de más nueva a más antigua
+    props: { post, anterior: posts[i + 1], siguiente: posts[i - 1] },
   }));
 }
 
-const { post } = Astro.props;
+const { post, anterior, siguiente } = Astro.props;
 const { Content } = await render(post);
 
 // Si la entrada tiene imagen propia, scripts/og-cards.mjs le ha compuesto una
 // tarjeta 1200x630; si no, cae en la de marca.
-const cardSource = post.data.image ?? sourceImageFor(post.body ?? "");
-const ogImage = cardSource ? `/og/${post.id}.png` : "/og.png";
-
-const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
-const readingMin = Math.max(1, Math.round(words / 200));
+const ogImage = portadaDe(post) ?? "/og.png";
+const readingMin = minutosDeLectura(post.body);
 
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -48,15 +47,61 @@ const jsonLd = JSON.stringify({
   image={ogImage}
 >
   <script type="application/ld+json" is:inline set:html={jsonLd} />
+  <div class="progreso-lectura" aria-hidden="true"></div>
+
   <article>
-    <h1>{post.data.title}</h1>
-    <p class="post-meta">
-      <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-      <span aria-hidden="true">·</span>
-      <span>{readingMin} min de lectura</span>
-    </p>
+    <header class="cabecera-post">
+      <a class="miga" href="/blog/">← Blog</a>
+      <h1>{post.data.title}</h1>
+      {post.data.summary && <p class="entradilla">{post.data.summary}</p>}
+      <p class="post-meta">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingMin} min de lectura</span>
+      </p>
+    </header>
     <Content />
   </article>
+
+  <aside class="autor">
+    <span class="autor-logo"><Logo size={28} /></span>
+    <div>
+      <p class="autor-nombre">Guille Dols</p>
+      <p>
+        Full stack developer. Trabajo sobre todo con .NET, Blazor y SQL Server.
+        <a href="/sobre-mi/">Más sobre mí</a>.
+      </p>
+    </div>
+  </aside>
+
   <Support text="¿Te ha servido esto? Puedes invitarme a un café patrocinándome en GitHub." />
-  <p style="margin-top: 3rem;"><a href="/blog/">← Volver al blog</a></p>
+
+  {(anterior || siguiente) && (
+    <nav class="entre-posts" aria-label="Otras entradas">
+      {anterior ? (
+        <a class="entre-posts-enlace" href={`/blog/${anterior.id}/`}>
+          <span>← Anterior</span>
+          {anterior.data.title}
+        </a>
+      ) : <span></span>}
+      {siguiente && (
+        <a class="entre-posts-enlace siguiente" href={`/blog/${siguiente.id}/`}>
+          <span>Siguiente →</span>
+          {siguiente.data.title}
+        </a>
+      )}
+    </nav>
+  )}
+
+  <script is:inline>
+    // Un # al pasar por cada título, para poder enlazar la sección
+    for (const h of document.querySelectorAll("article h2[id], article h3[id]")) {
+      const ancla = document.createElement("a");
+      ancla.className = "ancla";
+      ancla.href = "#" + h.id;
+      ancla.setAttribute("aria-label", "Enlace a esta sección");
+      ancla.textContent = "#";
+      h.append(ancla);
+    }
+  </script>
 </Base>

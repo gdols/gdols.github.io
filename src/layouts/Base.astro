@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Logo from "../components/Logo.astro";
 
 interface Props {
   title?: string;
@@ -7,6 +8,8 @@ interface Props {
   type?: "website" | "article";
   date?: Date;
   image?: string;
+  // "pagina" para portada y listados; el resto va a ancho de lectura
+  ancho?: "texto" | "pagina";
 }
 
 const {
@@ -15,6 +18,7 @@ const {
   type = "website",
   date,
   image = "/og.png",
+  ancho = "texto",
 } = Astro.props;
 const fullTitle = title ? `${title} · gdols.dev` : "gdols.dev";
 // En las tarjetas va sin sufijo: X y compañía ya enseñan el dominio aparte
@@ -66,19 +70,13 @@ const current = (prefix: string) =>
     </script>
   </head>
   <body>
-    <div class="wrap">
-      <header class="site">
+    <header class="site">
+      <div class="wrap wrap-ancho cabecera">
         <a class="brand" href="/">
-          <svg viewBox="0 0 96 96" width="20" height="20" aria-hidden="true">
-            <g fill="none" stroke-width="12" stroke-linecap="round" transform="translate(-4,-6)">
-              <circle cx="40" cy="44" r="20" stroke="currentColor"/>
-              <path d="M60 24 L60 64 Q60 84 40 84" stroke="currentColor"/>
-              <path d="M70 84 L84 84" stroke="var(--accent)"/>
-            </g>
-          </svg>
+          <Logo />
           gdols.dev
         </a>
-        <nav>
+        <nav aria-label="Principal">
           <a href="/blog/" aria-current={current("/blog")}>Blog</a>
           <a href="/proyectos/" aria-current={current("/proyectos")}>Proyectos</a>
           <a href="/sobre-mi/" aria-current={current("/sobre-mi")}>Sobre mí</a>
@@ -88,17 +86,43 @@ const current = (prefix: string) =>
             <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           </button>
         </nav>
-      </header>
-      <main>
-        <slot />
-      </main>
-      <footer class="site">
-        <span>© {new Date().getFullYear()} Guille</span>
-        <span>
-          <a href="https://github.com/gdols">GitHub</a> · <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a> · <a href="/rss.xml">RSS</a>
-        </span>
-      </footer>
-    </div>
+      </div>
+    </header>
+    <main class:list={["wrap", { "wrap-ancho": ancho === "pagina" }]}>
+      <slot />
+    </main>
+    <footer class="site">
+      <div class="wrap wrap-ancho">
+        <div class="pie">
+          <div class="pie-marca">
+            <a class="brand" href="/">
+              <Logo />
+              gdols.dev
+            </a>
+            <p>Notas y proyectos de Guille Dols. .NET, Blazor, SQL y lo que vaya cayendo.</p>
+          </div>
+          <div class="pie-columnas">
+            <div>
+              <p class="pie-titulo">Web</p>
+              <a href="/blog/">Blog</a>
+              <a href="/proyectos/">Proyectos</a>
+              <a href="/sobre-mi/">Sobre mí</a>
+              <a href="/rss.xml">RSS</a>
+            </div>
+            <div>
+              <p class="pie-titulo">En otros sitios</p>
+              <a href="https://github.com/gdols">GitHub</a>
+              <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>
+              <a href="mailto:guille@gdols.dev">guille@gdols.dev</a>
+            </div>
+          </div>
+        </div>
+        <div class="pie-final">
+          <span>© {new Date().getFullYear()} Guille Dols</span>
+          <span>Hecho con Astro. Sin cookies ni rastreadores.</span>
+        </div>
+      </div>
+    </footer>
     <script is:inline>
       document.getElementById("theme-toggle").addEventListener("click", () => {
         const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";

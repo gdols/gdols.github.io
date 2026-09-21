@@ -1,10 +1,20 @@
 ---
 import Base from "../layouts/Base.astro";
+import Logo from "../components/Logo.astro";
 import Support from "../components/Support.astro";
+
+const stack = [".NET", "Blazor", "SQL Server", "Azure", "Data Science", "Android", "Kotlin", "Python", "Astro"];
 ---
 <Base title="Sobre mí" description="Quién soy, con qué trabajo y cómo contactar conmigo.">
-  <h1>Sobre mí</h1>
-  <p>
+  <header class="cabecera-sobre-mi">
+    <span class="avatar"><Logo size={44} /></span>
+    <div>
+      <h1>Sobre mí</h1>
+      <p class="antetitulo">Guille Dols · Full stack developer</p>
+    </div>
+  </header>
+
+  <p class="lead">
     Soy Guille, full stack developer. Trabajo sobre todo con .NET, Blazor y SQL
     Server, peleándome a diario con Azure y realizando el Grado de Data Science.
     Me gusta profundizar en arquitectura, análisis y nuevas tecnologías, y de
@@ -17,6 +27,11 @@ import Support from "../components/Support.astro";
     RCD Mallorca no baje a 2ª.
   </p>
 
+  <h2>Con qué trabajo</h2>
+  <ul class="chips chips-grandes">
+    {stack.map((t) => <li>{t}</li>)}
+  </ul>
+
   <h2>Contacto</h2>
   <p>
     Lo más directo es el correo:
@@ -25,6 +40,11 @@ import Support from "../components/Support.astro";
   <p>
     También estoy en <a href="https://github.com/gdols">GitHub</a> y en
     <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>.
+  </p>
+  <p class="acciones">
+    <a class="boton" href="mailto:guille@gdols.dev">Escríbeme</a>
+    <a class="boton boton-secundario" href="https://github.com/gdols">GitHub</a>
+    <a class="boton boton-secundario" href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>
   </p>
 
   <Support text="Y si te apetece apoyar lo que hago, puedes patrocinarme en GitHub." />

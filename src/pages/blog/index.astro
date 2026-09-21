@@ -1,27 +1,29 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
-import { formatDate } from "../../utils";
+import TarjetaNota from "../../components/TarjetaNota.astro";
 
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const [ultima, ...resto] = posts;
 ---
-<Base title="Blog" description="Notas sobre .NET, Blazor, SQL y lo que vaya cayendo.">
-  <h1>Blog</h1>
+<Base title="Blog" description="Notas sobre .NET, Blazor, SQL y lo que vaya cayendo." ancho="pagina">
+  <header class="cabecera-pagina">
+    <p class="antetitulo">{posts.length} entradas</p>
+    <h1>Blog</h1>
+    <p class="lead">Notas sobre .NET, Blazor, SQL y lo que vaya cayendo.</p>
+  </header>
 
   {posts.length === 0 ? (
     <p class="muted">Todavía no he escrito nada. Todo llegará.</p>
   ) : (
-    <ul class="list">
-      {posts.map((p) => (
-        <li>
-          <div class="row">
-            <a href={`/blog/${p.id}/`}>{p.data.title}</a>
-            <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
-          </div>
-          {p.data.summary && <p>{p.data.summary}</p>}
-        </li>
-      ))}
-    </ul>
+    <>
+      <TarjetaNota post={ultima} destacada />
+      {resto.length > 0 && (
+        <div class="rejilla rejilla-3 rejilla-blog">
+          {resto.map((p) => <TarjetaNota post={p} />)}
+        </div>
+      )}
+    </>
   )}
 </Base>

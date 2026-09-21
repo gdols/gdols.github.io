@@ -6,5 +6,6 @@ page: "/blog/como-hice-mdpipe/"
 repo: "https://github.com/gdols/mdpipe"
 download: "https://github.com/gdols/mdpipe/releases/latest/download/MdPipe.exe"
 featured: true
+image: "/images/mdpipe-portada.png"
 order: 0
 ---
