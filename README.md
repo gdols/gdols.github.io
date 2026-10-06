@@ -9,6 +9,7 @@ Está hecha con [Astro](https://astro.build), sin JavaScript en el cliente y con
 - Los posts viven en `src/content/blog/`, un Markdown por post. El nombre del archivo es la URL (`hola-mundo.md` → `/blog/hola-mundo/`).
 - Los proyectos en `src/content/proyectos/`, un archivo por proyecto con solo el frontmatter (título, descripción, tecnologías, enlaces y una imagen opcional, `image`, para su tarjeta).
 - Todo lo demás es un layout (`src/layouts/Base.astro`), unos pocos componentes en `src/components/` (el logo, las tarjetas de notas y proyectos y el aviso de patrocinio) y los estilos (`src/styles/global.css`). No hay más.
+- La letra es IBM Plex Sans y se sirve desde la propia web (paquete `@fontsource-variable/ibm-plex-sans`), sin pedir nada a Google ni a nadie. La de código sigue siendo la monoespaciada del sistema.
 
 Para escribir un post, esto arriba del Markdown:
 
@@ -36,7 +37,7 @@ La imagen se decide sola, por este orden:
 
 En los dos primeros casos no se usa la captura tal cual: `scripts/og-cards.mjs`
 compone una tarjeta de 1200×630 con la imagen entera centrada sobre el fondo de
-la marca, y la deja en `public/og/<slug>.png`. Esa misma tarjeta es la portada de la entrada en la portada y en el blog; si no hay imagen, sale un fondo con el logo. Es necesario porque X recorta a
+la marca, y la deja en `public/og/<slug>.png`. Esa misma tarjeta es la portada de la entrada en el listado del blog; si no hay imagen, sale un fondo con el logo. Es necesario porque X recorta a
 1,91:1 y las capturas de móvil o de ventana se quedarían en una tira inservible.
 
 Se genera sola antes de cada `npm run build`. Para rehacerlas a mano:

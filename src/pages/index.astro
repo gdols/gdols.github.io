@@ -1,27 +1,14 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import TarjetaNota from "../components/TarjetaNota.astro";
-import TarjetaProyecto from "../components/TarjetaProyecto.astro";
+import { formatDate } from "../utils";
 
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+  .slice(0, 5);
 
 const proyectos = (await getCollection("proyectos", (p) => p.data.featured))
   .sort((a, b) => a.data.order - b.data.order);
-
-// La ventana de código de la portada, ya coloreada
-const perfil = [
-  `<span class="c-k">var</span> guille = <span class="c-k">new</span> <span class="c-t">Desarrollador</span>`,
-  `{`,
-  `    Rol = <span class="c-s">"Full stack"</span>,`,
-  `    Stack = [<span class="c-s">".NET"</span>, <span class="c-s">"Blazor"</span>,`,
-  `             <span class="c-s">"SQL Server"</span>, <span class="c-s">"Azure"</span>],`,
-  `    Estudiando = <span class="c-s">"Data Science"</span>,`,
-  `    Equipo = <span class="c-s">"RCD Mallorca"</span>,`,
-  `};`,
-].join("\n");
 
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -47,64 +34,53 @@ const jsonLd = JSON.stringify({
   ],
 });
 ---
-<Base ancho="pagina">
+<Base ancho="medio">
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
-  <section class="hero">
-    <div class="hero-texto">
-      <p class="antetitulo">Full stack developer</p>
-      <h1>Hola, soy <span class="degradado">Guille</span></h1>
-      <p class="lead">
-        Desarrollador full stack, principalmente con .NET, Blazor y SQL Server.
-        También trabajo con Azure y estudio el Grado de Data Science.
-      </p>
-      <p>
-        Esta web es donde voy dejando proyectos y notas de cosas que me ha
-        costado resolver o que no quiero volver a buscar. Si a alguien más le
-        sirven, mejor.
-      </p>
-      <p class="acciones">
-        <a class="boton" href="/blog/">Leer las notas</a>
-        <a class="boton boton-secundario" href="/proyectos/">Ver proyectos</a>
-      </p>
-      <p class="enlaces-sociales">
-        <a href="https://github.com/gdols">GitHub</a>
-        <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>
-        <a href="mailto:guille@gdols.dev">Correo</a>
-        <a href="/rss.xml">RSS</a>
-      </p>
-    </div>
-
-    <div class="ventana-codigo" aria-hidden="true">
-      <div class="ventana-barra">
-        <span></span><span></span><span></span>
-        <p>Guille.cs</p>
-      </div>
-      <pre><code set:html={perfil} /></pre>
-    </div>
+  <section class="intro">
+    <h1>Desarrollador full stack, principalmente con .NET, Blazor y SQL Server.</h1>
+    <p>
+      También trabajo con Azure y estudio el Grado de Data Science. Esta web es
+      donde voy dejando proyectos y notas de cosas que me ha costado resolver o
+      que no quiero volver a buscar. Si a alguien más le sirven, mejor.
+    </p>
+    <p class="intro-contacto">
+      <a href="mailto:guille@gdols.dev">guille@gdols.dev</a>
+      <a href="https://github.com/gdols">GitHub</a>
+      <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>
+    </p>
   </section>
 
   {posts.length > 0 && (
-    <section class="seccion" aria-labelledby="home-notas">
-      <div class="seccion-cabecera">
-        <h2 id="home-notas">Últimas notas</h2>
-        <a class="ver-todo" href="/blog/">Todas las notas</a>
-      </div>
-      <div class="rejilla rejilla-3">
-        {posts.map((p) => <TarjetaNota post={p} />)}
-      </div>
+    <section class="indice" aria-labelledby="home-notas">
+      <h2 id="home-notas">Notas</h2>
+      <ul>
+        {posts.map((p) => (
+          <li>
+            <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+            <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="indice-mas"><a href="/blog/">Todas las notas</a></p>
     </section>
   )}
 
   {proyectos.length > 0 && (
-    <section class="seccion" aria-labelledby="home-proyectos">
-      <div class="seccion-cabecera">
-        <h2 id="home-proyectos">Proyectos</h2>
-        <a class="ver-todo" href="/proyectos/">Todos los proyectos</a>
-      </div>
-      <div class="rejilla rejilla-2">
-        {proyectos.map((p) => <TarjetaProyecto proyecto={p} />)}
-      </div>
+    <section class="indice" aria-labelledby="home-proyectos">
+      <h2 id="home-proyectos">Proyectos</h2>
+      <ul>
+        {proyectos.map((p) => {
+          const principal = p.data.page ?? p.data.demo ?? p.data.repo;
+          return (
+            <li>
+              {principal ? <a href={principal}>{p.data.title}</a> : <span>{p.data.title}</span>}
+              <span class="indice-desc">{p.data.description}</span>
+            </li>
+          );
+        })}
+      </ul>
+      <p class="indice-mas"><a href="/proyectos/">Todos los proyectos</a></p>
     </section>
   )}
 </Base>

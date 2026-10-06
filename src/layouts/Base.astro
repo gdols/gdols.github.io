@@ -1,4 +1,5 @@
 ---
+import "@fontsource-variable/ibm-plex-sans";
 import "../styles/global.css";
 import Logo from "../components/Logo.astro";
 
@@ -8,8 +9,8 @@ interface Props {
   type?: "website" | "article";
   date?: Date;
   image?: string;
-  // "pagina" para portada y listados; el resto va a ancho de lectura
-  ancho?: "texto" | "pagina";
+  // "medio" para la portada, "pagina" para listados; el resto va a ancho de lectura
+  ancho?: "texto" | "medio" | "pagina";
 }
 
 const {
@@ -28,6 +29,8 @@ const url = new URL(path, Astro.site);
 const imageUrl = new URL(image, Astro.site);
 const current = (prefix: string) =>
   path.startsWith(prefix) ? "page" : undefined;
+// Cabecera, contenido y pie van al mismo ancho
+const wrap = ["wrap", { "wrap-medio": ancho === "medio", "wrap-ancho": ancho === "pagina" }];
 ---
 <html lang="es">
   <head>
@@ -71,7 +74,7 @@ const current = (prefix: string) =>
   </head>
   <body>
     <header class="site">
-      <div class="wrap wrap-ancho cabecera">
+      <div class:list={[...wrap, "cabecera"]}>
         <a class="brand" href="/">
           <Logo />
           gdols.dev
@@ -88,39 +91,18 @@ const current = (prefix: string) =>
         </nav>
       </div>
     </header>
-    <main class:list={["wrap", { "wrap-ancho": ancho === "pagina" }]}>
+    <main class:list={wrap}>
       <slot />
     </main>
     <footer class="site">
-      <div class="wrap wrap-ancho">
-        <div class="pie">
-          <div class="pie-marca">
-            <a class="brand" href="/">
-              <Logo />
-              gdols.dev
-            </a>
-            <p>Notas y proyectos de Guille Dols. .NET, Blazor, SQL y lo que vaya cayendo.</p>
-          </div>
-          <div class="pie-columnas">
-            <div>
-              <p class="pie-titulo">Web</p>
-              <a href="/blog/">Blog</a>
-              <a href="/proyectos/">Proyectos</a>
-              <a href="/sobre-mi/">Sobre mí</a>
-              <a href="/rss.xml">RSS</a>
-            </div>
-            <div>
-              <p class="pie-titulo">En otros sitios</p>
-              <a href="https://github.com/gdols">GitHub</a>
-              <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>
-              <a href="mailto:guille@gdols.dev">guille@gdols.dev</a>
-            </div>
-          </div>
-        </div>
-        <div class="pie-final">
-          <span>© {new Date().getFullYear()} Guille Dols</span>
-          <span>Hecho con Astro. Sin cookies ni rastreadores.</span>
-        </div>
+      <div class:list={[...wrap, "pie"]}>
+        <p>© {new Date().getFullYear()} Guille Dols · Sin cookies ni rastreadores</p>
+        <nav aria-label="En otros sitios">
+          <a href="mailto:guille@gdols.dev">Correo</a>
+          <a href="https://github.com/gdols">GitHub</a>
+          <a href="https://www.linkedin.com/in/guillermodols/">LinkedIn</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
       </div>
     </footer>
     <script is:inline>
